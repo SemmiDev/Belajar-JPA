@@ -77,7 +77,7 @@ CREATE TABLE m_kabupaten_kota (
 );
 ```
 
-**`master provinsi`**
+**`master kecamatan`**
 ``` sql
 CREATE TABLE m_kecamatan (
   id                VARCHAR(36),
