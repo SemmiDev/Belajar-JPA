@@ -1,5 +1,149 @@
-**`JPA`**
 **`© 2021 | Sammidev`**
+
+
+**`CONTOH 1`**
+
+**`master buku`**
+``` sql
+CREATE TABLE m_buku (
+  id  INT,
+  isbn VARCHAR(255) NOT NULL,
+  judul VARCHAR(255) NOT NULL,
+  pengarang VARCHAR(45) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (isbn)
+);
+```
+
+**`master anggota`**
+``` sql
+CREATE TABLE m_anggota (
+  id INT,
+  no_anggota VARCHAR(255) NOT NULL,
+  judul VARCHAR(255) NOT NULL,
+  nama VARCHAR(45) NOT NULL,
+  email VARCHAR(45) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (email)
+);
+```
+
+**`transaction peminjaman header`**
+``` sql
+CREATE TABLE t_peminjaman_header (
+  id INT,
+  kode_transksi VARCHAR(255) NOT NULL,
+  waktu_transaksi DATETIME,
+  id_anggota INT,
+  PRIMARY KEY (id),
+  UNIQUE (email),
+  FOREIGN KEY (id_anggota) REFERENCES m_anggota (id)
+);
+```
+
+**`transaction peminjaman detail`**
+``` sql
+CREATE TABLE t_peminjaman_detail (
+  id INT,
+  t_peminjaman_header_id INT,
+  id_buku INT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (t_peminjaman_header_id) REFERENCES t_peminjaman_header (id),
+  FOREIGN KEY (id_buku) REFERENCES m_buku (id),
+);
+```
+
+**`CONTOH 2`**
+
+**`master provinsi`**
+``` sql
+CREATE TABLE m_provinsi (
+  id   VARCHAR(36),
+  nama VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (nama)
+);
+```
+
+**`master kabupaten kota`**
+``` sql
+CREATE TABLE m_kabupaten_kota (
+  id          VARCHAR(36),
+  id_provinsi VARCHAR(36) NOT NULL,
+  nama VARCHAR (255) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (nama),
+  FOREIGN KEY (id_provinsi) REFERENCES m_provinsi (id)
+);
+```
+
+**`master provinsi`**
+``` sql
+CREATE TABLE m_kecamatan (
+  id                VARCHAR(36),
+  id_kabupaten_kota VARCHAR(36)  NOT NULL,
+  nama              VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (nama),
+  FOREIGN KEY (id_kabupaten_kota) REFERENCES m_kabupaten_kota (id)
+);
+```
+
+**`master kelurahan`**
+``` sql
+CREATE TABLE m_kelurahan (
+  id           VARCHAR(36),
+  id_kecamatan VARCHAR(36)  NOT NULL,
+  nama         VARCHAR(255) NOT NULL,
+  kodepos      VARCHAR(10)  NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (nama),
+  FOREIGN KEY (id_kecamatan) REFERENCES kecamatan (id)
+);
+```
+
+**`transaction registrasi`**
+``` sql
+CREATE TABLE t_registrasi (
+  id        VARCHAR(36),
+  email     VARCHAR(255) NOT NULL,
+  password  VARCHAR(255) NOT NULL,
+  nama      VARCHAR(255) NOT NULL,
+  alamat    VARCHAR(255) NOT NULL,
+  id_kelurahan VARCHAR(36) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id_kelurahan) REFERENCES m_kelurahan(id)
+);
+```
+
+**`data sample`**
+``` sql
+INSERT INTO m_provinsi (id, nama) VALUES ('dki', 'DKI Jakarta');
+INSERT INTO m_provinsi (id, nama) VALUES ('jatim', 'Jawa Timur');
+INSERT INTO m_provinsi (id, nama) VALUES ('jabar', 'Jawa Barat');
+
+INSERT INTO m_kabupaten_kota (id, id_provinsi, nama) VALUES ('kabbogor', 'jabar', 'Kabupaten Bogor');
+INSERT INTO m_kabupaten_kota (id, id_provinsi, nama) VALUES ('kotabogor', 'jabar', 'Kota Bogor');
+INSERT INTO m_kabupaten_kota (id, id_provinsi, nama) VALUES ('surabaya', 'jatim', 'Surabaya');
+INSERT INTO m_kabupaten_kota (id, id_provinsi, nama) VALUES ('mojokerto', 'jatim', 'Mojokerto');
+
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('cibinong', 'kabbogor', 'Cibinong');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('gnputri', 'kabbogor', 'Gunung Putri');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('bootimur', 'kotabogor', 'Bogor Timur');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('boobarat', 'kotabogor', 'Bogor Barat');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('rungkut', 'surabaya', 'Rungkut');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('wonokromo', 'surabaya', 'Wonokromo');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('mojosari', 'mojokerto', 'Mojosari');
+INSERT INTO m_kecamatan (id, id_kabupaten_kota, nama) VALUES ('trowulan', 'mojokerto', 'Trowulan');
+
+INSERT INTO m_kelurahan (id, id_kecamatan, nama, kodepos) VALUES ('tengah', 'cibinong', 'Tengah', '16914');
+INSERT INTO m_kelurahan (id, id_kecamatan, nama, kodepos) VALUES ('pakansari', 'cibinong', 'Pakansari', '16915');
+INSERT INTO m_kelurahan (id, id_kecamatan, nama, kodepos) VALUES ('ciangsana', 'gnputri', 'Ciangsana', '16968');
+INSERT INTO m_kelurahan (id, id_kecamatan, nama, kodepos) VALUES ('cikeas', 'gnputri', 'Cikeas', '16966');
+```
+
+
+**`CONTOH KODE`**
 
 ```java
 import lombok.Data;
